@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <!-- Link to the CSS file with Flask's url_for function -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Chatbot</h1>
+        <div class="messages" id="chatMessages">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <div class="input-container">
+            <input type="text" placeholder="Type your message..." id="userInput">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script_our.js') }}"></script>
+</body>
+</html>
