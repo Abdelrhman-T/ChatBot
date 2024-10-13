@@ -30,7 +30,7 @@ Ensure that you have the following installed:
 1. **Clone the repository:**
 
    ```bash
-git clone https://github.com/Abdelrhman-T/ChatBot.git
+   git clone https://github.com/Abdelrhman-T/ChatBot.git
 
 
 2. **Create and activate the environment:**
@@ -38,8 +38,8 @@ git clone https://github.com/Abdelrhman-T/ChatBot.git
     You can create the environment using Anaconda:
 
     ```bash
-conda create --name chatbot_env python=3.10.11
-conda activate chatbot_env
+   conda create --name chatbot_env python=3.10.11
+   conda activate chatbot_env
 
 
 3. **Install the dependencies:**
