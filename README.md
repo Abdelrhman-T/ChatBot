@@ -60,4 +60,5 @@ Ensure that you have the following installed:
     ```bash
     python .\app.py
 
-    Model Training (optional): If you need to retrain the model, run the training notebook found in notebooks/TrainModel.ipynb.
+5. **Model Training (optional):**
+   If you need to retrain the model, run the training notebook found in notebooks/TrainModel.ipynb.
