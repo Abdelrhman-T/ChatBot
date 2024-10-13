@@ -15,8 +15,8 @@ body {
 
 /* Chat Section */
 .chat-container {
-    width: 600px; /* Further increased width */
-    max-width: 90%; /* Ensures responsiveness on smaller screens */
+    width: 800px;
+    max-width: 90%;
     border: 1px solid #34495e;
     border-radius: 5px;
     padding: 20px;
@@ -32,6 +32,7 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* Messages Container */
 .messages {
     flex: 1;
     overflow-y: scroll;
@@ -46,14 +47,46 @@ h1 {
     display: none;
 }
 
+/* User and Bot Message Styles */
+.message-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.user-message {
+    flex-direction: row-reverse; /* Keep the emoji on the left */
+    justify-content: flex-start;
+}
+
+.bot-message {
+    justify-content: flex-start;
+}
+
 .message {
     background-color: #1e272e;
     border-radius: 4px;
     padding: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    max-width: 75%;
 }
 
+/* Emoji Avatar */
+.emoji-avatar {
+    margin-right: 10px;
+}
+
+/* User-specific styling */
+.user-message .message {
+    background-color: #3498dbc5; /* User message background color */
+    margin-left: auto; /* Aligns user message container to the left */
+}
+
+.bot-message .message {
+    background-color: #3498db59; /* Bot message background color */
+}
+
+/* Input Section */
 .input-container {
     display: flex;
     align-items: center;
@@ -78,14 +111,15 @@ h1 {
 
 .input-container button {
     padding: 10px;
-    border: 1px solid #95a5a6;
-    background-color: #1abc9c;
+    border: none;
+    background-color: #16a084ab; /* Darker shade */
     color: white;
     border-radius: 4px;
     cursor: pointer;
     width: 100px;
+    transition: background-color 0.3s ease;
 }
 
 .input-container button:hover {
-    background-color: #16a085;
+    background-color: #149174; /* Slightly darker shade on hover */
 }

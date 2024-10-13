@@ -24,11 +24,17 @@ text_analytics_clint = TextAnalyticsClient(endpoint=endpoint, credential=AzureKe
 
 app = Flask(__name__)
 
-tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+from tensorflow.keras.preprocessing.text import Tokenizer
+
+df_process = pd.read_csv("models/df_process.csv")
+
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(df_process["input_texts processed"]+df_process["target_texts processed"])
+
 nlp = spacy.load("en_core_web_sm")
 
-max_sequence_len = 15
-total_words = tokenizer.vocab_size
+max_sequence_len_encoder, max_sequence_len_decoder = 14, 61
+total_words = len(tokenizer.word_index) + 1
 
 def convert_time_to_words(time_str):
     time_parts = time_str.split(":")
@@ -38,34 +44,27 @@ def convert_time_to_words(time_str):
     return time_in_words
 
 def preprocess_text(text):
-    text = re.sub(r"\\'", "'", text)
-    text = re.sub(r"\\[a-z]","",text)
-    text = re.sub(r"[.]{2,}","aaa", text)
-    text = re.sub(r"[.]"," ",text)
-    text = re.sub(r"[,]"," ",text)
-    text = re.sub(r" ' ","'",text)
     text = re.sub(r'\d{1,2}:\d{2}', lambda x: convert_time_to_words(x.group()), text)
     text = re.sub(r"\d+", lambda x: num2words(int(x.group())), text)
     text = re.sub(r"\s+", " ", text)
     text = text.strip()
     text = text.lower()
-    doc = nlp(text)
-    tokens = [token.lemma_ for token in doc if not token.is_punct]
-    text = " ".join(tokens)
     return text
 
 
 seq2seq = load_model("models\chatBot_model.h5")
 
 
+# Inference Encoder Model
 encoder_inputs = seq2seq.input[0]
 encoder_outputs, state_h_enc, state_c_enc = seq2seq.layers[4].output
 encoder_states = [state_h_enc, state_c_enc]
 encoder_model = Model([encoder_inputs], encoder_states)
 
+# Inference Decoder Model
 decoder_inputs = Input(shape=(None,))
-decoder_state_input_h = Input(shape=(300,))
-decoder_state_input_c = Input(shape=(300,))
+decoder_state_input_h = Input(shape=(500,))
+decoder_state_input_c = Input(shape=(500,))
 decoder_state_inputs = [decoder_state_input_h, decoder_state_input_c]
 
 decoder_embedding = seq2seq.layers[3]
@@ -83,27 +82,24 @@ decoder_outputs = decoder_dense(decoder_outputs)
 decoder_model = Model([decoder_inputs] + decoder_state_inputs, [decoder_outputs] + decoder_states)
 
 
+
 def chatBot(question):
+    # Preprocess the input text
+    input_text = preprocess_text(question)  # Assuming this is your custom preprocessing function
 
-    prepro_question = preprocess_text(question)
-    prepro = [prepro_question]
+    # Tokenize and pad the input text
+    input_sequence = tokenizer.texts_to_sequences([input_text])
+    input_sequence = pad_sequences(input_sequence, maxlen=max_sequence_len_encoder, padding='post')
 
-    txt = []
-    for x in prepro:
-        lst = []
-        for y in x.split():
-            try:
-                lst.append(tokenizer.convert_tokens_to_ids(y))
-            except Exception as e:
-                lst.append(tokenizer.convert_tokens_to_ids("[UNK]"))
-        txt.append(lst)
+    # Convert to TensorFlow tensor
+    input_tensor = tf.convert_to_tensor(input_sequence)
 
-    txt = pad_sequences(txt, maxlen=max_sequence_len, padding='post')
+    # Get encoder states
+    stat = encoder_model.predict(input_tensor, verbose=0)
 
-    stat = encoder_model.predict(txt, verbose=0)
-
+    # Prepare for decoding
     empty_target_seq = np.zeros((1, 1))
-    empty_target_seq[0, 0] = tokenizer.convert_tokens_to_ids("[CLS]")
+    empty_target_seq[0, 0] = tokenizer.word_index.get("[CLS]", 1)  # Assuming [CLS] is the start token
 
     stop_condition = False
     decoded_translation = ''
@@ -111,18 +107,21 @@ def chatBot(question):
     while not stop_condition:
         dec_outputs, h, c = decoder_model.predict([empty_target_seq] + stat, verbose=0)
 
+        # Get the index of the sampled word
         sampled_word_index = np.argmax(dec_outputs[0, -1, :])
-        sampled_word = tokenizer.convert_ids_to_tokens(int(sampled_word_index))
+        sampled_word = tokenizer.index_word.get(sampled_word_index, "[UNK]")  # Convert index back to word
 
-        if sampled_word in ['[SEP]', '[PAD]'] or len(decoded_translation.split()) > max_sequence_len:
+        if sampled_word in ['[SEP]', '[PAD]', '[UNK]'] or len(decoded_translation.split()) > max_sequence_len_decoder:
             stop_condition = True
 
-        if not sampled_word.startswith('##') and sampled_word != '[SEP]':
+        if sampled_word not in ['[SEP]', '[PAD]', '[UNK]']:
             decoded_translation += sampled_word + ' '
 
+        # Prepare the next target sequence
         empty_target_seq = np.zeros((1, 1))
         empty_target_seq[0, 0] = sampled_word_index
 
+        # Update states
         stat = [h, c]
 
     return decoded_translation.strip()

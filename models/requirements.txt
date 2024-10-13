@@ -1,8 +1,0 @@
-tensorflow==2.15.0
-num2words
-numpy
-pandas
-transformers
-flask
-groq
-azure-ai-textanalytics
