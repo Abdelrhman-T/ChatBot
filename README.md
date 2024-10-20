@@ -4,6 +4,7 @@ This project implements a chatbot using a Seq2Seq (sequence-to-sequence) model w
 
 ## Table of Contents
 
+- [Project Demo](#project-demo)
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Installation](#installation)
@@ -11,9 +12,12 @@ This project implements a chatbot using a Seq2Seq (sequence-to-sequence) model w
 - [Contributions](#contributions)
 - [Future Work](#future-work)
 
+## Project Demo
+You can view a demo of the project on LinkedIn:
+[Test Project on LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7253511361832357888/)
+
 
 ## Project Overview
-
 This chatbot project was developed as our graduation project in the Microsoft machine learning engineer track at DEPI. The chatbot is divided into two main components:
 - **KayoBot**: Built using Seq2Seq architecture with LSTM, focused on technical inquiries related to web development, machine learning, and deep learning.
 - **GroqBot**: Integrated using the Groq API to handle other conversational aspects.
