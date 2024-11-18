@@ -18,7 +18,7 @@ function sendMessage() {
         userMessage.textContent = messageText;
 
         // Send message to server and handle bot response
-        fetch('/groq_answer', {
+        fetch('/ar_answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: messageText })

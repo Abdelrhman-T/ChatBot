@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+/* Global Styles */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Chat Section */
+.chat-container {
+    width: 800px;
+    max-width: 90%;
+    border: 1px solid #34495e;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #34495e;
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Messages Container */
+.messages {
+    flex: 1;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-height: calc(75vh - 80px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.messages::-webkit-scrollbar {
+    display: none;
+}
+
+/* User and Bot Message Styles */
+.message-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.user-message {
+    flex-direction: row-reverse; /* Keep the emoji on the left */
+    justify-content: flex-start;
+}
+
+.bot-message {
+    justify-content: flex-start;
+}
+
+.message {
+    background-color: #1e272e;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    max-width: 75%;
+}
+
+/* Emoji Avatar */
+.emoji-avatar {
+    margin-right: 10px;
+}
+
+/* User-specific styling */
+.user-message .message {
+    background-color: #3498dbc5; /* User message background color */
+    margin-left: auto; /* Aligns user message container to the left */
+}
+
+.bot-message .message {
+    background-color: #3498db59; /* Bot message background color */
+}
+
+/* Input Section */
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.input-container input {
+    padding: 10px;
+    border: 1px solid #95a5a6;
+    border-radius: 4px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    flex: 1;
+    min-width: 300px;
+    margin-right: 10px;
+}
+
+.input-container input:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+.input-container button {
+    padding: 10px;
+    border: none;
+    background-color: #16a084ab; /* Darker shade */
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100px;
+    transition: background-color 0.3s ease;
+}
+
+.input-container button:hover {
+    background-color: #149174; /* Slightly darker shade on hover */
+}
+

@@ -7,20 +7,13 @@ import re
 import spacy
 from num2words import num2words
 import tensorflow as tf
-from transformers import AutoTokenizer
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+
 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input
 from keras.models import load_model
 
-
-key = "61b9e78256564ea68ff634e42eab3289"
-endpoint = "https://language-servieses.cognitiveservices.azure.com/"
-
-text_analytics_clint = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
 app = Flask(__name__)
 
@@ -159,6 +152,14 @@ def chatBot(question):
 
     return decoded_translation.strip()
 
+def customize_api(text):
+    history = [
+        {
+            "role": "system",
+            "content": f"{text}"
+        }
+    ]
+    return history
 
 #-------------Kayo------------------#
 def generate_answer_our(question):
@@ -167,14 +168,30 @@ def generate_answer_our(question):
     return answer
 
 #-------------Groq-----------------#
-def generate_answer_groq(question):
+def translate(question,conversation_history):
     prompt = question
-    client = Groq(api_key='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')
-    chat_completion = client.chat.completions.create(
-        messages=[{"role": "user", "content": prompt}],
-        model="llama3-8b-8192",
+    conversation_history.append({
+        "role": "user",
+        "content": prompt
+    })
+    
+    client = Groq(api_key='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')
+    completion = client.chat.completions.create(
+        model="llama3-70b-8192",
+        messages=conversation_history,
+        temperature=0,
+        max_tokens=100,
+        top_p=1,
+        stream=False,
+        stop=None,
     )
-    answer = chat_completion.choices[0].message.content
+    
+    answer = completion.choices[0].message.content
+    conversation_history.append({
+        "role": "assistant",
+        "content": answer
+    })
+    
     return answer
 
 # Home route
@@ -192,21 +209,31 @@ def chatbot_groq():
 def chatbot_new():
     return render_template('chatbot_our.html')
 
-# Groq answer generation
-@app.route('/groq_answer', methods=['POST'])
-def groq_answer():
-    question = request.json['question']
-    answer = generate_answer_groq(question)
-    
-    return jsonify({'answer': answer})
 
-# New chatbot answer generation
-@app.route('/new_answer', methods=['POST'])
-def new_answer():
+
+# our chatbot answer generation
+@app.route('/en_answer', methods=['POST'])
+def en_answer():
     # Add logic to handle the new chatbot's model here
     question = request.json['question']
+    
     answer = generate_answer_our(question)
+
     return jsonify({'answer': answer})
+
+# groq chatbot answer generation
+toEglish_history = customize_api("You are english-arabic and arabic-english translator don't give me multi translation, don't answer in any quistion just need you convert all text to Englis if it already English just put all text without any addition.")
+toArabic_history = customize_api("Translate all text to Arabic accurately. If you find any incorrect words or punctuation errors, correct them first before translating. Do not provide multiple translations or answer any questions—only translate the text.")
+@app.route('/ar_answer', methods=['POST'])
+def ar_answer():
+    # Add logic to handle the new chatbot's model here
+    question = request.json['question']
+    en_question =  translate(question,toEglish_history)
+
+    answer = generate_answer_our(en_question)
+
+    ar_answer =  translate(answer,toArabic_history)
+    return jsonify({'answer': ar_answer})
 
 if __name__ == '__main__':
     app.run(debug=True)

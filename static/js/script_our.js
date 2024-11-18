@@ -18,7 +18,7 @@ function sendMessage() {
         userMessage.textContent = messageText;
 
         // Send message to server and handle bot response
-        fetch('/new_answer', {
+        fetch('/en_answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: messageText })
