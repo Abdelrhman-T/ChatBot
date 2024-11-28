@@ -62,9 +62,10 @@ Ensure that you have the following installed:
     python -m spacy download en_core_web_sm
 
 3. **Download My Model from drive:**
-    [KayBot Model](https://drive.google.com/file/d/1B2WcwuInFF2pX4lrAak7RxeKQSYfJmPn/view?usp=sharing)
+   [KayBot Model](https://drive.google.com/file/d/1B2WcwuInFF2pX4lrAak7RxeKQSYfJmPn/view?usp=sharing)
+   and then put it in models Folder
 
-4. **Run the chatbot:**
+5. **Run the chatbot:**
 
     Run the chatbot script in interactive mode (ensure you have a compatible terminal or environment):
 
